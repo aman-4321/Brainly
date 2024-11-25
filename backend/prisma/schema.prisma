@@ -46,8 +46,8 @@ model Link {
 }
 
 enum ContentType {
-  IMAGE
-  AUDIO
-  ARTICLE
-  VIDEO
+  document
+  tweet
+  youtube
+  link
 }
