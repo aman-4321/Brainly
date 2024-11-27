@@ -23,13 +23,14 @@ model User {
 }
 
 model Content {
-  id     Int         @id @default(autoincrement())
-  link   String
-  type   ContentType
-  title  String
-  tags   Tags[]      @relation("ContentTags")
-  user   User        @relation(fields: [userId], references: [id])
-  userId Int
+  id        Int         @id @default(autoincrement())
+  link      String
+  type      ContentType
+  title     String
+  tags      Tags[]      @relation("ContentTags")
+  user      User        @relation(fields: [userId], references: [id])
+  userId    Int
+  isPrivate Boolean     @default(false)
 }
 
 model Tags {
@@ -39,10 +40,11 @@ model Tags {
 }
 
 model Link {
-  id     Int    @id @default(autoincrement())
-  hash   String @unique
-  user   User   @relation(fields: [userId], references: [id])
-  userId Int    @unique
+  id        Int    @id @default(autoincrement())
+  hash      String @unique
+  user      User   @relation(fields: [userId], references: [id])
+  userId    Int    @unique
+  contentId Int?   @unique
 }
 
 enum ContentType {
