@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { shareSchema } from "../zod/shareSchema";
+import { disableShareSchema, shareSchema } from "../zod/shareSchema";
 import { v4 as uuidv4 } from "uuid";
 import { authMiddleware } from "../middleware/middleware";
 import { PrismaClient } from "@prisma/client";
@@ -22,14 +22,8 @@ shareRouter.post(
       });
       return;
     }
-    const { share, contentId } = data;
 
-    if (!share) {
-      res.status(400).json({
-        message: "For '/open', share must be true.",
-      });
-      return;
-    }
+    const { contentId } = data;
 
     try {
       const content = await prisma.content.findUnique({
@@ -49,47 +43,107 @@ shareRouter.post(
         return;
       }
 
-      if (share) {
-        const existingLink = await prisma.link.findUnique({
-          where: { userId },
-        });
+      const existingLink = await prisma.link.findUnique({
+        where: {
+          contentId,
+          userId,
+        },
+      });
 
-        let hash: string;
-
-        if (existingLink) {
-          hash = existingLink.hash;
-        } else {
-          hash = uuidv4();
-
-          await prisma.link.create({
-            data: {
-              hash,
-              userId,
-            },
-          });
-        }
-
-        await prisma.content.update({
-          where: { id: contentId },
-          data: { isPrivate: false },
-        });
-
+      if (existingLink) {
         res.status(200).json({
-          link: hash,
+          message: "Link already exists for this content.",
+          link: existingLink.hash,
         });
         return;
       }
+
+      const hash = uuidv4();
+
+      await prisma.link.create({
+        data: {
+          hash,
+          userId,
+          contentId,
+        },
+      });
+
+      await prisma.content.update({
+        where: { id: contentId },
+        data: { isPrivate: false },
+      });
+
+      res.status(200).json({
+        message: "Link created successfully.",
+        link: hash,
+      });
     } catch (err) {
       console.error(err);
       res
         .status(500)
         .json({ message: "An error occurred while processing your request" });
     }
-    return;
   },
 );
 
-shareRouter.get("/open/:hash", async (req: Request, res: Response) => {});
+shareRouter.get("/open/:hash", async (req: Request, res: Response) => {
+  const hash = req.params.hash;
+
+  try {
+    const link = await prisma.link.findUnique({
+      where: { hash },
+      select: { contentId: true },
+    });
+
+    if (!link || link.contentId === null) {
+      res.status(404).json({
+        message: "Link not found",
+      });
+      return;
+    }
+
+    const content = await prisma.content.findUnique({
+      where: { id: link.contentId },
+      select: {
+        id: true,
+        title: true,
+        link: true,
+        type: true,
+        tags: true,
+        isPrivate: true,
+      },
+    });
+
+    if (!content) {
+      res.status(404).json({
+        message: "Content not found",
+      });
+      return;
+    }
+
+    if (content.isPrivate) {
+      res.status(403).json({
+        message: "This content is private",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      content: {
+        id: content.id,
+        title: content.title,
+        link: content.link,
+        type: content.type,
+        tags: content.tags,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: "An error occurred while fetching the content",
+    });
+  }
+});
 
 shareRouter.post(
   "/openall",
@@ -104,7 +158,7 @@ shareRouter.post(
   authMiddleware,
   async (req: Request, res: Response) => {
     const userId = Number(req.userId);
-    const { success, data, error } = shareSchema.safeParse(req.body);
+    const { success, data, error } = disableShareSchema.safeParse(req.body);
 
     if (!success) {
       res.status(400).json({
@@ -143,31 +197,42 @@ shareRouter.post(
         return;
       }
 
+      if (content.isPrivate) {
+        res.status(400).json({
+          message: "Sharing is already disabled for this content",
+        });
+        return;
+      }
+
       await prisma.content.update({
         where: { id: contentId },
         data: { isPrivate: true },
       });
 
       const existingLink = await prisma.link.findUnique({
-        where: { userId },
+        where: {
+          userId,
+          contentId,
+        },
       });
 
       if (existingLink) {
         await prisma.link.delete({
-          where: { userId },
+          where: {
+            id: existingLink.id,
+          },
         });
-        return;
       }
 
-      res.status(200).json({ message: "Content sharing disabled" });
-      return;
+      res.status(200).json({
+        message: "Content sharing disabled",
+      });
     } catch (err) {
       console.error(err);
       res
         .status(500)
         .json({ message: "An error occurred while processing your request" });
     }
-    return;
   },
 );
 
