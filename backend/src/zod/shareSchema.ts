@@ -19,3 +19,19 @@ export const disableShareSchema = z
     message: "For '/close', share must be false.",
     path: ["share"],
   });
+
+export const shareAllScheam = z
+  .object({
+    share: z.boolean(),
+  })
+  .refine((data) => data.share === true, {
+    message: "For '/openall' share must be true",
+  });
+
+export const disableAllSchema = z
+  .object({
+    share: z.boolean(),
+  })
+  .refine((data) => data.share === false, {
+    message: "For '/closeall' share must be false",
+  });

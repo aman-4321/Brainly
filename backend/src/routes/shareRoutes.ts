@@ -1,5 +1,10 @@
 import { Request, Response, Router } from "express";
-import { disableShareSchema, shareSchema } from "../zod/shareSchema";
+import {
+  disableAllSchema,
+  disableShareSchema,
+  shareAllScheam,
+  shareSchema,
+} from "../zod/shareSchema";
 import { v4 as uuidv4 } from "uuid";
 import { authMiddleware } from "../middleware/middleware";
 import { PrismaClient } from "@prisma/client";
@@ -77,6 +82,7 @@ shareRouter.post(
         message: "Link created successfully.",
         link: hash,
       });
+      return;
     } catch (err) {
       console.error(err);
       res
@@ -148,12 +154,126 @@ shareRouter.get("/open/:hash", async (req: Request, res: Response) => {
 shareRouter.post(
   "/openall",
   authMiddleware,
-  async (req: Request, res: Response) => {},
+  async (req: Request, res: Response) => {
+    const userId = Number(req.userId);
+
+    const { success, error } = shareAllScheam.safeParse(req.body);
+
+    if (!success) {
+      res.status(400).json({
+        message: "Invalid inputs",
+        error: error.errors,
+      });
+      return;
+    }
+
+    try {
+      const existingLink = await prisma.link.findFirst({
+        where: {
+          userId,
+          contentId: null,
+        },
+      });
+
+      if (existingLink) {
+        await prisma.content.updateMany({
+          where: { userId },
+          data: { isPrivate: false },
+        });
+
+        res.status(200).json({
+          message: "Global sharing link already exists for this content.",
+          link: existingLink.hash,
+        });
+        return;
+      }
+
+      const hash = uuidv4();
+
+      await prisma.link.create({
+        data: {
+          hash,
+          userId,
+          contentId: null,
+        },
+      });
+
+      await prisma.content.updateMany({
+        where: { userId },
+        data: { isPrivate: false },
+      });
+
+      res.status(200).json({
+        message: "Global sharing link created successfully",
+        link: hash,
+      });
+      return;
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({
+        message: "An error occurred while processing your request",
+      });
+      return;
+    }
+  },
 );
 
-shareRouter.get("/openall/:hash", async (req: Request, res: Response) => {});
+shareRouter.get("/openall/:hash", async (req: Request, res: Response) => {
+  const hash = req.params.hash;
 
-shareRouter.post(
+  try {
+    const link = await prisma.link.findUnique({
+      where: { hash },
+    });
+
+    if (!link) {
+      res.status(404).json({
+        message: "Link not found",
+      });
+      return;
+    }
+
+    const userId = link.userId;
+
+    const contents = await prisma.content.findMany({
+      where: {
+        userId,
+        isPrivate: false,
+      },
+      select: {
+        id: true,
+        title: true,
+        link: true,
+        type: true,
+        tags: {
+          select: {
+            title: true,
+          },
+        },
+      },
+    });
+
+    if (contents.length === 0) {
+      res.status(404).json({
+        message: "No Public content found for this user",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      message: "Content retreived successfully",
+      contents,
+    });
+    return;
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: "An error occurred while processing your request",
+    });
+  }
+});
+
+shareRouter.delete(
   "/close",
   authMiddleware,
   async (req: Request, res: Response) => {
@@ -239,5 +359,49 @@ shareRouter.post(
 shareRouter.delete(
   "/closeall",
   authMiddleware,
-  async (req: Request, res: Response) => {},
+  async (req: Request, res: Response) => {
+    const userId = Number(req.userId);
+
+    const { success, error } = disableAllSchema.safeParse(req.body);
+
+    if (!success) {
+      res.status(400).json({
+        message: "Invalid inputs",
+        error: error.errors,
+      });
+      return;
+    }
+
+    try {
+      const content = await prisma.content.findMany({
+        where: { userId },
+        select: { id: true, isPrivate: true },
+      });
+
+      if (content.length === 0) {
+        res.status(404).json({
+          message: "No content found",
+        });
+        return;
+      }
+
+      await prisma.content.updateMany({
+        where: { userId },
+        data: { isPrivate: true },
+      });
+
+      await prisma.link.deleteMany({
+        where: { userId },
+      });
+
+      res.status(200).json({
+        message: "All content sharing disabled successfully",
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({
+        message: "An error occurred while processing your request",
+      });
+    }
+  },
 );
