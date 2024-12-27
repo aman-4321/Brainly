@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { JWT_SECRET } from "../config";
 import jwt, { JwtPayload, TokenExpiredError } from "jsonwebtoken";
+import { JWT_SECRET } from "../config";
+
+import dotenv from "dotenv";
+dotenv.config();
 
 declare global {
   namespace Express {
@@ -13,7 +16,7 @@ declare global {
 export const authMiddleware = (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): void => {
   const token = req.cookies?.token;
 

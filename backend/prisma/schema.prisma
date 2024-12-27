@@ -44,6 +44,6 @@ model Link {
 enum ContentType {
   document
   tweet
-  youtube
+  video
   link
 }

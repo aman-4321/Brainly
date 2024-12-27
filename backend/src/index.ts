@@ -1,10 +1,13 @@
-import express, { type Express } from "express";
-import cors from "cors";
 import cookieParser from "cookie-parser";
-import { userRouter } from "./routes/userRoutes";
+import cors from "cors";
+import express, { type Express } from "express";
+import rateLimit from "express-rate-limit";
 import { contentRouter } from "./routes/contentRoutes";
 import { shareRouter } from "./routes/shareRoutes";
-import rateLimit from "express-rate-limit";
+import { userRouter } from "./routes/userRoutes";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app: Express = express();
 
@@ -13,8 +16,10 @@ const port = process.env.PORT || 8080;
 app.use(
   cors({
     credentials: true,
-    origin: "http://localhost:5173",
-  }),
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
 );
 
 // const limiter = rateLimit({
