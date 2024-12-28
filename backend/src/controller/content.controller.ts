@@ -146,6 +146,56 @@ export const getContentByID = async (req: Request, res: Response) => {
   }
 };
 
+// Add this function to content.controller.ts
+
+type ContentType = "document" | "video" | "tweet" | "link";
+
+export const getContentByType = async (req: Request, res: Response) => {
+  const userId = Number(req.userId);
+  const type = req.params.type.toLowerCase();
+
+  // Validate content type
+  const validTypes = ["document", "tweet", "video", "link"];
+  if (!validTypes.includes(type)) {
+    res.status(400).json({
+      message:
+        "Invalid content type. Must be one of: document, tweet, video, link",
+    });
+    return;
+  }
+
+  try {
+    const content = await prisma.content.findMany({
+      where: {
+        userId: userId,
+        type: type as ContentType,
+      },
+      select: {
+        id: true,
+        link: true,
+        type: true,
+        title: true,
+        tags: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+        userId: true,
+      },
+    });
+
+    res.status(200).json({
+      content,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Unable to fetch content",
+      err,
+    });
+  }
+};
+
 export const deleteContent = async (req: Request, res: Response) => {
   const userId = Number(req.userId);
   const contentId = Number(req.params.id);
