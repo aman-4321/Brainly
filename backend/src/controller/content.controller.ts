@@ -146,15 +146,12 @@ export const getContentByID = async (req: Request, res: Response) => {
   }
 };
 
-// Add this function to content.controller.ts
-
 type ContentType = "document" | "video" | "tweet" | "link";
 
 export const getContentByType = async (req: Request, res: Response) => {
   const userId = Number(req.userId);
   const type = req.params.type.toLowerCase();
 
-  // Validate content type
   const validTypes = ["document", "tweet", "video", "link"];
   if (!validTypes.includes(type)) {
     res.status(400).json({
