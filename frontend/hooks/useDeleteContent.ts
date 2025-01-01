@@ -2,21 +2,23 @@ import { API_URL } from "@/config";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
+const removeContent = async (contentId: number) => {
+  if (!contentId) throw new Error("Content ID is required");
+
+  const response = await axios.delete(
+    `${API_URL}/content/delete/${contentId}`,
+    { withCredentials: true }
+  );
+
+  return response.data;
+};
+
 const useDeleteContent = () => {
   const queryClient = useQueryClient();
 
-  const deleteContent = useMutation({
+  const deleteContentMutation = useMutation({
     mutationKey: ["deleteContent"],
-    mutationFn: async (contentId: number) => {
-      if (!contentId) throw new Error("Content ID is required");
-
-      const response = await axios.delete(
-        `${API_URL}/content/delete/${contentId}`,
-        { withCredentials: true }
-      );
-
-      return response.data;
-    },
+    mutationFn: removeContent,
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contents"] });
@@ -26,7 +28,7 @@ const useDeleteContent = () => {
       alert("Failed to delete content");
     },
   });
-  return { deleteContent };
+  return { deleteContentMutation };
 };
 
 export default useDeleteContent;

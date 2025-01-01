@@ -13,9 +13,9 @@ interface CardProps {
 }
 
 function ContentCard({ id, link, title, type, tags }: CardProps) {
-  const { deleteContent } = useDeleteContent();
+  const { deleteContentMutation } = useDeleteContent();
 
-  const { mutateAsync: Deletecontent, isPending } = deleteContent;
+  const { mutateAsync: deleteContent, isPending } = deleteContentMutation;
 
   const handleDelete = async () => {
     if (!id) {
@@ -24,7 +24,7 @@ function ContentCard({ id, link, title, type, tags }: CardProps) {
     }
     try {
       if (window.confirm("Are you sure you want to delete this content")) {
-        await Deletecontent(Number(id));
+        await deleteContent(Number(id));
       }
     } catch (error) {
       console.error("Delete failed", error);

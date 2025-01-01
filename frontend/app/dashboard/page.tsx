@@ -8,9 +8,9 @@ import { useState } from "react";
 
 const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { getAllContent } = useContent();
+  const { getAllContentQuery } = useContent();
 
-  const { data, isLoading, error } = getAllContent;
+  const { data, isLoading, error } = getAllContentQuery;
 
   if (isLoading) return <div>Loading...</div>;
 
