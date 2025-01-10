@@ -1,4 +1,3 @@
-import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -7,8 +6,7 @@ import {
   shareAllScheam,
   shareSchema,
 } from "../zod/shareSchema";
-
-const prisma = new PrismaClient();
+import { prisma } from "../db";
 
 export const shareContent = async (req: Request, res: Response) => {
   const userId = Number(req.userId);

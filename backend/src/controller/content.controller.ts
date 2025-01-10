@@ -1,8 +1,6 @@
-import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import { addSchema } from "../zod/contentSchema";
-
-const prisma = new PrismaClient();
+import { prisma } from "../db";
 
 export const addContent = async (req: Request, res: Response) => {
   try {
@@ -25,7 +23,7 @@ export const addContent = async (req: Request, res: Response) => {
           update: {},
           create: { title: tagTitle },
         });
-      }) || []
+      }) || [],
     );
 
     const content = await prisma.content.create({

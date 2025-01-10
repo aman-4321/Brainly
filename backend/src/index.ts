@@ -9,9 +9,9 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const app: Express = express();
-
 const port = process.env.PORT || 8080;
+
+const app: Express = express();
 
 app.use(
   cors({
@@ -22,13 +22,15 @@ app.use(
   })
 );
 
-// const limiter = rateLimit({
-//   windowMs: 15 * 60 * 1000,
-//   max: 20,
-//   message: "Too many requests from this IP, please try again later",
-// });
-//
-// app.use(limiter);
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: "Too many requests from this IP, please try again later",
+});
+
+if (process.env.NODE_ENV === "production") {
+  app.use(limiter);
+}
 
 app.use(express.json());
 app.use(cookieParser());
@@ -37,4 +39,6 @@ app.use("/api/v1/user", userRouter);
 app.use("/api/v1/content", contentRouter);
 app.use("/api/v1/share", shareRouter);
 
-app.listen(port);
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});

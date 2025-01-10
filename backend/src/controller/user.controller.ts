@@ -1,11 +1,9 @@
-import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../config";
 import { signinSchema, signupSchema } from "../zod/userSchema";
-
-const prisma = new PrismaClient();
+import { prisma } from "../db";
 
 export const userSignup = async (req: Request, res: Response) => {
   try {
