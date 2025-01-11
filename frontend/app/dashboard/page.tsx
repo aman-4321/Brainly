@@ -5,6 +5,7 @@ import Script from "next/script";
 import ContentCard from "../../components/ContentCard";
 import { useContent } from "@/hooks/useContent";
 import { useState } from "react";
+import AddContentCard from "@/components/AddContentCard";
 
 const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,7 +34,7 @@ const Dashboard = () => {
       </div>
       {isModalOpen && (
         <div className="flex justify-center items-center backdrop-blur-lg">
-          The modal is open now
+          <AddContentCard></AddContentCard>
         </div>
       )}
       {error && <div>Error in loading content</div>}

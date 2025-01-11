@@ -6,6 +6,7 @@ import {
   getContent,
   getContentByID,
   getContentByType,
+  getTags,
 } from "../controller/content.controller";
 
 export const contentRouter = express.Router();
@@ -19,3 +20,5 @@ contentRouter.get("/get/:id", authMiddleware, getContentByID);
 contentRouter.get("/type/:type", authMiddleware, getContentByType);
 
 contentRouter.delete("/delete/:id", authMiddleware, deleteContent);
+
+contentRouter.get("/tags", authMiddleware, getTags);

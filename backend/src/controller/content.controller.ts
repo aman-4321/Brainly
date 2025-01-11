@@ -23,7 +23,7 @@ export const addContent = async (req: Request, res: Response) => {
           update: {},
           create: { title: tagTitle },
         });
-      }) || [],
+      }) || []
     );
 
     const content = await prisma.content.create({
@@ -232,6 +232,39 @@ export const deleteContent = async (req: Request, res: Response) => {
   } catch (err) {
     res.status(500).json({
       message: "Unable to delete the content",
+      err,
+    });
+  }
+};
+
+export const getTags = async (req: Request, res: Response) => {
+  try {
+    const searchQuery = (req.query.search as string)?.trim();
+
+    const tags = await prisma.tags.findMany({
+      where: searchQuery
+        ? {
+            title: {
+              contains: searchQuery,
+              mode: "insensitive",
+            },
+          }
+        : undefined,
+      select: {
+        id: true,
+        title: true,
+      },
+      orderBy: {
+        title: "asc",
+      },
+    });
+
+    res.status(200).json({
+      tags: tags.map((tag) => tag.title),
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Unable to fetch tags",
       err,
     });
   }
