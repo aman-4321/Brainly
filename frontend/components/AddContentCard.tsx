@@ -25,13 +25,17 @@ interface IAddContent {
   tags: string[];
 }
 
-const AddContentCard = () => {
+interface AddContentCardProps {
+  onClose: () => void;
+}
+
+const AddContentCard = ({ onClose }: AddContentCardProps) => {
   const [type, setType] = useState<ContentType>("link");
   const [link, setLink] = useState<string>("");
   const [title, setTitle] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
 
-  const { getAllTagsQuery } = useTags(tagInput);
+  const { getAllTagsQuery } = useTags();
 
   const queryClient = useQueryClient();
 
@@ -51,6 +55,7 @@ const AddContentCard = () => {
       setLink("");
       setTitle("");
       setTags([]);
+      onClose();
     },
   });
 
@@ -60,7 +65,7 @@ const AddContentCard = () => {
     mutateAsync(content);
   };
 
-  const { data: GetTags, isLoading, error } = getAllTagsQuery;
+  const { isLoading, error } = getAllTagsQuery;
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -76,7 +81,7 @@ const AddContentCard = () => {
               setType(value.toLowerCase() as ContentType)
             }
           >
-            <SelectTrigger className="w-full sm:w-[200px] border-gray-300">
+            <SelectTrigger className="w-full border-gray-300">
               <SelectValue
                 className="placeholder:text-gray-500"
                 placeholder="Select a Type"
