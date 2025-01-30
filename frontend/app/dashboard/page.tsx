@@ -7,39 +7,63 @@ import { useContent } from "@/hooks/useContent";
 import { useState } from "react";
 import AddContentCard from "@/components/AddContentCard";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import ShareBrain from "@/components/ShareBrain";
 
 const Dashboard = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [ModalContent, setModalContent] = useState(false);
+  const [ModalShare, setModalShare] = useState(false);
   const { getAllContentQuery } = useContent();
 
   const { data, isLoading, error } = getAllContentQuery;
 
   if (isLoading) return <div>Loading...</div>;
 
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
+  const toggleModalAddContent = () => {
+    setModalContent(!ModalContent);
+  };
+
+  const toggleModalShare = () => {
+    setModalShare(!ModalShare);
   };
 
   return (
-    <div className={`container mx-auto px-4 ${isModalOpen ? "blur-sm" : ""}`}>
+    <div
+      className={`container mx-auto px-4 ${
+        ModalShare || ModalContent ? "blur-sm" : ""
+      }`}
+    >
       <Script
         async
         src="https://platform.twitter.com/widgets.js"
         strategy="afterInteractive"
       />
       <div className="flex items-end justify-end gap-2 mb-6">
-        <Button className="bg-blue-300 text-black">Share Brain</Button>
-        <Button onClick={toggleModal} className="bg-purple-800 text-white">
+        <Button onClick={toggleModalShare} className="bg-blue-300 text-black">
+          Share Brain
+        </Button>
+        <Button
+          onClick={toggleModalAddContent}
+          className="bg-purple-800 text-white"
+        >
           Add Content
         </Button>
       </div>
 
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+      <Dialog open={ModalShare} onOpenChange={setModalShare}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogTitle className="text-lg font-semibold mb-4">
+            Share Content
+          </DialogTitle>
+          <ShareBrain onClose={() => setModalShare(false)} />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={ModalContent} onOpenChange={setModalContent}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogTitle className="text-lg font-semibold mb-4">
             Add New Content
           </DialogTitle>
-          <AddContentCard onClose={() => setIsModalOpen(false)} />
+          <AddContentCard onClose={() => setModalContent(false)} />
         </DialogContent>
       </Dialog>
 
