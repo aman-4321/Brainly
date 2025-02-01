@@ -1,8 +1,8 @@
-"use client";
+"use client ";
 
+import { useEffect, useState } from "react";
 import useShareBrain from "@/hooks/useShareBrain";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
 import { Copy, X, Link2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -10,16 +10,37 @@ import { Switch } from "@/components/ui/switch";
 const ShareBrain = ({ onClose }: { onClose: () => void }) => {
   const { CloseBrainMutation, ShareBrainMutation, getSharedBrainQuery } =
     useShareBrain();
-  const [isShared, setIsShared] = useState(!!getSharedBrainQuery.data?.link);
+  const [isShared, setIsShared] = useState(false);
+  const [copyMessage, setCopyMessage] = useState("");
+
+  // Get the link from the query data first, then fallback to mutation data
+  const link =
+    getSharedBrainQuery.data?.link || ShareBrainMutation.data?.link || null;
 
   useEffect(() => {
-    setIsShared(!!getSharedBrainQuery.data?.link);
-  }, [getSharedBrainQuery.data?.link]);
+    console.log("Query Data:", getSharedBrainQuery.data);
+    console.log("Is Shared:", isShared);
+  }, [getSharedBrainQuery.data, isShared]);
 
-  if (getSharedBrainQuery.isLoading) return <div>Loading...</div>;
-  if (getSharedBrainQuery.error) return <div>Error...</div>;
+  // Initialize state from query data
+  useEffect(() => {
+    // Set initial state as soon as we get the query data
+    if (getSharedBrainQuery.data?.link) {
+      setIsShared(true);
+    }
+  }, [getSharedBrainQuery.data]);
 
-  const handleShare = async () => {
+  // Update state when mutations complete
+  useEffect(() => {
+    if (ShareBrainMutation.isSuccess) {
+      setIsShared(true);
+    }
+    if (CloseBrainMutation.isSuccess) {
+      setIsShared(false);
+    }
+  }, [ShareBrainMutation.isSuccess, CloseBrainMutation.isSuccess]);
+
+  const handleToggle = async () => {
     try {
       if (!isShared) {
         await ShareBrainMutation.mutateAsync();
@@ -27,15 +48,24 @@ const ShareBrain = ({ onClose }: { onClose: () => void }) => {
         await CloseBrainMutation.mutateAsync();
       }
     } catch (error) {
-      console.error("Error toggling share state:", error);
+      console.error("Error toggling share:", error);
+      // Revert the local state if the mutation fails
+      setIsShared(!isShared);
     }
   };
 
   const copyToClipboard = () => {
-    if (getSharedBrainQuery.data?.link) {
-      navigator.clipboard.writeText(getSharedBrainQuery.data.link);
+    if (link) {
+      navigator.clipboard.writeText(link);
+      setCopyMessage("Link copied!");
+      setTimeout(() => setCopyMessage(""), 2000);
     }
   };
+
+  // Show loading state only during initial load
+  if (getSharedBrainQuery.isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="space-y-6 p-4 border rounded-lg">
@@ -46,32 +76,33 @@ const ShareBrain = ({ onClose }: { onClose: () => void }) => {
         </span>
         <Switch
           checked={isShared}
-          onCheckedChange={(checked) => {
-            setIsShared(checked);
-            handleShare();
-          }}
+          onCheckedChange={handleToggle}
+          disabled={
+            ShareBrainMutation.isPending || CloseBrainMutation.isPending
+          }
         />
       </div>
-
       <div className="space-y-4">
         <div className="text-sm text-gray-500">
           Status: {isShared ? "Public" : "Private"}
         </div>
-
-        {isShared ? (
+        {link ? (
           <>
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium">Link:</span>
-              <Input
-                readOnly
-                value={getSharedBrainQuery.data?.link || "Generating link..."}
-                className="flex-1"
-              />
+              <Input readOnly value={link} className="flex-1" />
             </div>
             <div className="flex justify-end gap-2">
-              <Button variant="outline" size="sm" onClick={copyToClipboard}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={copyToClipboard}
+                disabled={
+                  ShareBrainMutation.isPending || CloseBrainMutation.isPending
+                }
+              >
                 <Copy className="h-4 w-4 mr-2" />
-                Copy Link
+                {copyMessage || "Copy Link"}
               </Button>
               <Button variant="outline" size="sm" onClick={onClose}>
                 <X className="h-4 w-4 mr-2" />

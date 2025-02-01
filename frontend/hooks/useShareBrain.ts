@@ -19,18 +19,6 @@ const ShareBrain = async () => {
   }
 };
 
-const GetSharedBrain = async (hash?: string) => {
-  if (!hash) {
-    return "Please Provide a valid hash";
-  }
-
-  const res = await axios.get(`${API_URL}/share/openall/${hash}`, {
-    withCredentials: true,
-  });
-
-  return res.data;
-};
-
 const CloseBrain = async () => {
   const res = await axios.post(
     `${API_URL}/share/closeall`,
@@ -41,19 +29,39 @@ const CloseBrain = async () => {
   return res.data;
 };
 
-const useShareBrain = (hash?: string) => {
+const useShareBrain = () => {
   const queryclient = useQueryClient();
+
+  const getSharedBrainQuery = useQuery({
+    queryKey: ["getSharedBrain"],
+    queryFn: async () => {
+      const statusRes = await axios.get(`${API_URL}/share/status`, {
+        withCredentials: true,
+      });
+
+      if (statusRes.data.isShared && statusRes.data.hash) {
+        return {
+          link: statusRes.data.hash,
+          isShared: true,
+        };
+      }
+
+      return { link: null, isShared: false };
+    },
+    retry: 0,
+    refetchOnMount: true,
+    staleTime: 0,
+  });
 
   const ShareBrainMutation = useMutation({
     mutationKey: ["shareContent"],
     mutationFn: ShareBrain,
     onSuccess: (data) => {
-      queryclient.invalidateQueries({ queryKey: ["getSharedBrain"] });
+      queryclient.setQueryData(["getSharedBrain"], {
+        link: data.link,
+        isShared: true,
+      });
       return data;
-    },
-    onError: (error) => {
-      console.error("Failed to share brain", error);
-      throw error;
     },
   });
 
@@ -61,20 +69,12 @@ const useShareBrain = (hash?: string) => {
     mutationKey: ["closeContent"],
     mutationFn: CloseBrain,
     onSuccess: (data) => {
-      queryclient.invalidateQueries({ queryKey: ["getSharedBrain"] });
+      queryclient.setQueryData(["getSharedBrain"], {
+        link: null,
+        isShared: false,
+      });
       return data;
     },
-    onError: (error) => {
-      console.error("Failed to close brain", error);
-      throw error;
-    },
-  });
-
-  const getSharedBrainQuery = useQuery({
-    queryKey: ["getSharedBrain", hash],
-    queryFn: () => GetSharedBrain(hash),
-    enabled: !!hash,
-    retry: false,
   });
 
   return { ShareBrainMutation, CloseBrainMutation, getSharedBrainQuery };

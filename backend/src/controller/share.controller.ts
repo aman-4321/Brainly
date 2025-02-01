@@ -389,3 +389,39 @@ export const CloseAll = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const GetShareStatus = async (req: Request, res: Response) => {
+  const userId = Number(req.userId);
+
+  try {
+    const link = await prisma.link.findUnique({
+      where: { userId },
+      select: { hash: true },
+    });
+
+    const publicContent = await prisma.content.findFirst({
+      where: {
+        userId,
+        isPrivate: false,
+      },
+    });
+
+    if (link && publicContent) {
+      res.status(200).json({
+        isShared: true,
+        hash: link.hash,
+      });
+      return;
+    }
+
+    res.status(200).json({
+      isShared: false,
+      hash: null,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: "An error occurred while checking share status",
+    });
+  }
+};

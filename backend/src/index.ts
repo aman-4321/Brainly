@@ -9,18 +9,9 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const port = process.env.PORT || 8080;
-
 const app: Express = express();
 
-app.use(
-  cors({
-    credentials: true,
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+const port = process.env.PORT || 8080;
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -31,6 +22,18 @@ const limiter = rateLimit({
 if (process.env.NODE_ENV === "production") {
   app.use(limiter);
 }
+
+app.use(
+  cors({
+    credentials: true,
+    origin:
+      process.env.NODE_ENV === "production"
+        ? process.env.FRONTEND_URL
+        : "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 
 app.use(express.json());
 app.use(cookieParser());
