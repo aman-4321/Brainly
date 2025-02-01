@@ -295,6 +295,14 @@ export const GetAllContent = async (req: Request, res: Response) => {
   try {
     const link = await prisma.link.findUnique({
       where: { hash },
+      include: {
+        user: {
+          select: {
+            username: true,
+            email: true,
+          },
+        },
+      },
     });
 
     if (!link) {
@@ -332,8 +340,9 @@ export const GetAllContent = async (req: Request, res: Response) => {
     }
 
     res.status(200).json({
-      message: "Content retreived successfully",
+      message: "Content retrieved successfully",
       contents,
+      user: link.user,
     });
     return;
   } catch (err) {
@@ -341,6 +350,7 @@ export const GetAllContent = async (req: Request, res: Response) => {
     res.status(500).json({
       message: "An error occurred while processing your request",
     });
+    return;
   }
 };
 

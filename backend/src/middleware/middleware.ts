@@ -40,6 +40,7 @@ export const authMiddleware = (
     const decoded = jwt.verify(token, secret) as JwtPayload;
 
     if (!decoded.userId) {
+      res.clearCookie("token");
       res.status(401).json({
         message: "Invalid token payload",
       });
@@ -49,6 +50,7 @@ export const authMiddleware = (
     req.userId = decoded.userId;
     next();
   } catch (err: any) {
+    res.clearCookie("token");
     const message =
       err instanceof TokenExpiredError ? "Token Expired" : "Invalid Token";
     res.status(401).json({ message });

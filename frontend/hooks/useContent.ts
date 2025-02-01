@@ -36,6 +36,7 @@ export const useContent = () => {
     queryKey: ["contents"],
     queryFn: fetchContent,
     refetchOnWindowFocus: false,
+    staleTime: 0,
   });
 
   return { getAllContentQuery };

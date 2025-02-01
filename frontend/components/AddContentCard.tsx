@@ -57,6 +57,9 @@ const AddContentCard = ({ onClose }: AddContentCardProps) => {
       setTags([]);
       onClose();
     },
+    onError: (error) => {
+      console.error("Error in adding content", error);
+    },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
