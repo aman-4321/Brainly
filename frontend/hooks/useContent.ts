@@ -1,6 +1,5 @@
-import { API_URL } from "@/config";
+import { axiosInstance } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 
 type Tag = {
   id: number;
@@ -21,9 +20,7 @@ type ContentResponse = {
 };
 
 const fetchContent = async () => {
-  const response = await axios.get(`${API_URL}/content/get`, {
-    withCredentials: true,
-  });
+  const response = await axiosInstance.get("/content/get");
 
   if (response.status !== 200) {
     throw new Error("Error in fetching content");

@@ -8,14 +8,23 @@ import { useState } from "react";
 import AddContentCard from "@/components/AddContentCard";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import ShareBrain from "@/components/ShareBrain";
-import { Brain, Plus, Share } from "lucide-react";
+import { Brain, LogOut, Plus, Share } from "lucide-react";
+import { axiosInstance } from "@/lib/axios";
+import { useRouter } from "next/navigation";
 
 const Dashboard = () => {
   const [modalContent, setModalContent] = useState(false);
   const [modalShare, setModalShare] = useState(false);
   const { getAllContentQuery } = useContent();
-
   const { data, isLoading, error } = getAllContentQuery;
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await axiosInstance.post("/user/logout");
+      router.push("/signin");
+    } catch {}
+  };
 
   if (isLoading)
     return (
@@ -37,7 +46,7 @@ const Dashboard = () => {
 
       <header className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 cursor-pointer">
             <Brain className="h-8 w-8 text-purple-600" />
             <h1 className="text-2xl font-bold text-gray-800">Brainly</h1>
           </div>
@@ -56,6 +65,14 @@ const Dashboard = () => {
             >
               <Plus className="h-4 w-4" />
               <span>Add Content</span>
+            </Button>
+            <Button
+              onClick={handleLogout}
+              variant="outline"
+              className="flex items-center space-x-2"
+            >
+              <LogOut className="h-4 w-4" />
+              <span>Logout</span>
             </Button>
           </div>
         </div>

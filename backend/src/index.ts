@@ -1,21 +1,23 @@
+import compression from "compression";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import express, { type Express } from "express";
+import dotenv from "dotenv";
+import express, { Request, Response, type Express } from "express";
 import rateLimit from "express-rate-limit";
+import helmet from "helmet";
 import { contentRouter } from "./routes/contentRoutes";
 import { shareRouter } from "./routes/shareRoutes";
 import { userRouter } from "./routes/userRoutes";
-import dotenv from "dotenv";
 
 dotenv.config();
 
 const app: Express = express();
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8082;
 
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 20,
+  windowMs: 10 * 60 * 1000,
+  max: 50,
   message: "Too many requests from this IP, please try again later",
 });
 
@@ -37,10 +39,18 @@ app.use(
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(helmet());
+app.use(compression());
 
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/content", contentRouter);
 app.use("/api/v1/share", shareRouter);
+
+app.use("/health", (req: Request, res: Response) => {
+  res.status(200).json({
+    msg: "working",
+  });
+});
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

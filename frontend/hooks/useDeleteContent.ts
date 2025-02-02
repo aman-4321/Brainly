@@ -1,14 +1,10 @@
-import { API_URL } from "@/config";
+import { axiosInstance } from "@/lib/axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 
 const removeContent = async (contentId: number) => {
   if (!contentId) throw new Error("Content ID is required");
 
-  const response = await axios.delete(
-    `${API_URL}/content/delete/${contentId}`,
-    { withCredentials: true }
-  );
+  const response = await axiosInstance.delete(`/content/delete/${contentId}`);
 
   return response.data;
 };
@@ -23,8 +19,7 @@ const useDeleteContent = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contents"] });
     },
-    onError: (error) => {
-      console.error("Delete error", error);
+    onError: () => {
       alert("Failed to delete content");
     },
   });

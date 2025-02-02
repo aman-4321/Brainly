@@ -1,13 +1,9 @@
-import { API_URL } from "@/config";
+import { axiosInstance } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 
 export const fetchTags = async (filter?: string) => {
-  const response = await axios.get(
-    `${API_URL}/content/tags${filter ? `?search=${filter}` : ""}`,
-    {
-      withCredentials: true,
-    },
+  const response = await axiosInstance.get(
+    `/content/tags${filter ? `?search=${filter}` : ""}`,
   );
 
   if (response.status !== 200) {

@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { motion } from "framer-motion";
 import { Loader2, UserPlus, Mail, Lock } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -17,7 +16,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { API_URL } from "@/config";
+import { axiosInstance } from "@/lib/axios";
 
 interface ISignup {
   username: string;
@@ -26,7 +25,7 @@ interface ISignup {
 }
 
 const Signup = (data: ISignup) => {
-  return axios.post(`${API_URL}/user/signup`, data, { withCredentials: true });
+  return axiosInstance.post("/user/signup", data);
 };
 
 const SignUpPage = () => {
@@ -49,6 +48,7 @@ const SignUpPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     mutateAsync({ username, email, password });
   };
 

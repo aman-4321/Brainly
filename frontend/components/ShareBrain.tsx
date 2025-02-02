@@ -15,10 +15,7 @@ const ShareBrain = () => {
   const link =
     getSharedBrainQuery.data?.link || ShareBrainMutation.data?.link || null;
 
-  useEffect(() => {
-    console.log("Query Data:", getSharedBrainQuery.data);
-    console.log("Is Shared:", isShared);
-  }, [getSharedBrainQuery.data, isShared]);
+  useEffect(() => {}, [getSharedBrainQuery.data, isShared]);
 
   useEffect(() => {
     if (getSharedBrainQuery.data?.link) {
@@ -42,8 +39,7 @@ const ShareBrain = () => {
       } else {
         await CloseBrainMutation.mutateAsync();
       }
-    } catch (error) {
-      console.error("Error toggling share:", error);
+    } catch {
       setIsShared(!isShared);
     }
   };

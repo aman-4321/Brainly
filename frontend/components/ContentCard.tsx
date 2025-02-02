@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import useDeleteContent from "@/hooks/useDeleteContent";
 import {
@@ -45,20 +44,16 @@ function ContentCard({
 }: CardProps) {
   const { deleteContentMutation } = useDeleteContent();
   const { mutateAsync: deleteContent, isPending } = deleteContentMutation;
-  const [isHovered, setIsHovered] = useState(false);
 
   const handleDelete = async () => {
     if (!id) {
-      console.error("NO content Id provided");
       return;
     }
     try {
       if (window.confirm("Are you sure you want to delete this content?")) {
         await deleteContent(Number(id));
       }
-    } catch (error) {
-      console.error("Delete failed", error);
-    }
+    } catch {}
   };
 
   const getIcon = () => {
@@ -146,8 +141,6 @@ function ContentCard({
       className="h-full"
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2 }}
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
     >
       <Card className="h-full overflow-hidden">
         <CardHeader className="pb-2">
@@ -164,9 +157,7 @@ function ContentCard({
                 size="icon"
                 onClick={handleDelete}
                 disabled={isPending}
-                className={`text-gray-400 hover:text-red-600 hover:bg-red-100 transition-colors ${
-                  isHovered ? "opacity-100" : "opacity-0"
-                }`}
+                className="text-gray-400 hover:text-red-600 hover:bg-red-100 transition-colors"
               >
                 <Trash2 className="w-5 h-5" />
               </Button>
@@ -175,10 +166,13 @@ function ContentCard({
         </CardHeader>
         <CardContent className="pb-2">{renderContent()}</CardContent>
         <CardFooter>
-          <div className="flex flex-wrap gap-2 mt-2">
-            {tags?.map((tag) => (
+          <div
+            key={`tag-container-${id}`}
+            className="flex flex-wrap gap-2 mt-2"
+          >
+            {tags?.map((tag, index) => (
               <Badge
-                key={tag.id}
+                key={tag.id ?? `tag-index-${index}`}
                 variant="secondary"
                 className="bg-purple-100 text-purple-800 hover:bg-purple-200"
               >

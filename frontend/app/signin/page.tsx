@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { motion } from "framer-motion";
 import { Loader2, Mail, Lock } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -17,7 +16,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { API_URL } from "@/config";
+import { axiosInstance } from "@/lib/axios";
 
 interface ISignin {
   email: string;
@@ -25,7 +24,7 @@ interface ISignin {
 }
 
 const Signin = (data: ISignin) => {
-  return axios.post(`${API_URL}/user/signin`, data, { withCredentials: true });
+  return axiosInstance.post("/user/signin", data);
 };
 
 const SigninPage = () => {
@@ -141,7 +140,7 @@ const SigninPage = () => {
           </CardContent>
           <CardFooter className="justify-center">
             <p className="text-sm text-gray-600">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link href="/signup" className="text-purple-600 hover:underline">
                 Sign up
               </Link>

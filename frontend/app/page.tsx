@@ -1,20 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Brain, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import BrainAnimation from "@/components/BrainAnimation";
 
 export default function LandingPage() {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
-
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-white text-gray-900">
       <motion.div
@@ -25,7 +17,7 @@ export default function LandingPage() {
       >
         <div className="flex items-center mb-8">
           <Brain className="h-10 w-10 text-purple-600 mr-3" />
-          <h1 className="text-3xl font-bold">Brainily</h1>
+          <h1 className="text-3xl font-bold">Brainly</h1>
         </div>
         <h2 className="text-4xl md:text-5xl font-extrabold mb-6">
           Your Second Brain,
@@ -34,7 +26,7 @@ export default function LandingPage() {
         </h2>
         <p className="text-xl mb-8 text-gray-600">
           Organize thoughts, boost productivity, and unlock your mind&apos;s
-          full potential with Brainily.
+          full potential with Brainly.
         </p>
         <div className="flex space-x-4">
           <Button
@@ -62,38 +54,5 @@ export default function LandingPage() {
         <BrainAnimation />
       </motion.div>
     </div>
-  );
-}
-
-function BrainAnimation() {
-  return (
-    <motion.div
-      className="relative w-64 h-64"
-      animate={{
-        scale: [1, 1.1, 1],
-        rotate: [0, 5, -5, 0],
-      }}
-      transition={{
-        duration: 5,
-        ease: "easeInOut",
-        times: [0, 0.5, 1],
-        repeat: Number.POSITIVE_INFINITY,
-      }}
-    >
-      <Brain className="w-full h-full text-purple-600" />
-      <motion.div
-        className="absolute inset-0 rounded-full bg-purple-300 mix-blend-multiply"
-        animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.2, 0.3],
-        }}
-        transition={{
-          duration: 3,
-          ease: "easeInOut",
-          times: [0, 0.5, 1],
-          repeat: Number.POSITIVE_INFINITY,
-        }}
-      />
-    </motion.div>
   );
 }

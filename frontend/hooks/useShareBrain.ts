@@ -1,14 +1,10 @@
-import { API_URL } from "@/config";
+import { axiosInstance } from "@/lib/axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
 const ShareBrain = async () => {
   try {
-    const res = await axios.post(
-      `${API_URL}/share/openall`,
-      { share: true },
-      { withCredentials: true }
-    );
+    const res = await axiosInstance.post("/share/openall", { share: true });
     return res.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
@@ -20,11 +16,7 @@ const ShareBrain = async () => {
 };
 
 const CloseBrain = async () => {
-  const res = await axios.post(
-    `${API_URL}/share/closeall`,
-    { share: false },
-    { withCredentials: true }
-  );
+  const res = await axiosInstance.post("/share/closeall", { share: false });
 
   return res.data;
 };
@@ -35,9 +27,7 @@ const useShareBrain = () => {
   const getSharedBrainQuery = useQuery({
     queryKey: ["getSharedBrain"],
     queryFn: async () => {
-      const statusRes = await axios.get(`${API_URL}/share/status`, {
-        withCredentials: true,
-      });
+      const statusRes = await axiosInstance.get("/share/status");
 
       if (statusRes.data.isShared && statusRes.data.hash) {
         return {

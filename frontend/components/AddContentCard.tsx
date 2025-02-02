@@ -3,8 +3,6 @@
 import { useState } from "react";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import axios from "axios";
-import { API_URL } from "@/config";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Select,
@@ -15,6 +13,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { useTags } from "@/hooks/useGetTags";
+import { axiosInstance } from "@/lib/axios";
 
 type ContentType = "document" | "link" | "video" | "tweet";
 
@@ -40,9 +39,7 @@ const AddContentCard = ({ onClose }: AddContentCardProps) => {
   const queryClient = useQueryClient();
 
   const AddContent = async (add: IAddContent) => {
-    const response = await axios.post(`${API_URL}/content/add`, add, {
-      withCredentials: true,
-    });
+    const response = await axiosInstance.post("/content/add", add);
     return response.data;
   };
 
@@ -51,14 +48,12 @@ const AddContentCard = ({ onClose }: AddContentCardProps) => {
     mutationFn: AddContent,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contents"] });
+      queryClient.invalidateQueries({ queryKey: ["sharedBrain"] });
       setType("link");
       setLink("");
       setTitle("");
       setTags([]);
       onClose();
-    },
-    onError: (error) => {
-      console.error("Error in adding content", error);
     },
   });
 
@@ -128,6 +123,7 @@ const AddContentCard = ({ onClose }: AddContentCardProps) => {
         <div>
           <Label>Tags</Label>
           <Input
+            required
             value={tags}
             onChange={(e) =>
               setTags(e.target.value.split(",").map((tag) => tag.trim()))

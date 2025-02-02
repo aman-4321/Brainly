@@ -2,11 +2,35 @@
 
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { motion } from "framer-motion";
-import { User2, Brain, Loader2 } from "lucide-react";
+import { User2, Loader2 } from "lucide-react";
 import ContentCard from "@/components/ContentCard";
-import { API_URL } from "@/config";
+import { axiosInstance } from "@/lib/axios";
+import axios from "axios";
+
+export interface Tag {
+  id: number;
+  title: string;
+}
+
+export interface Content {
+  id: number;
+  title: string;
+  link: string;
+  type: "video" | "link" | "document" | "tweet";
+  tags: Tag[];
+}
+
+export interface User {
+  username: string;
+  email: string;
+}
+
+export interface SharedBrainResponse {
+  message: string;
+  contents: Content[];
+  user: User;
+}
 
 export default function SharedBrain({
   params,
@@ -16,11 +40,11 @@ export default function SharedBrain({
   const unwrappedParams = React.use(params);
   const hash = unwrappedParams.hash;
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery<SharedBrainResponse>({
     queryKey: ["sharedBrain", hash],
     queryFn: async () => {
       try {
-        const res = await axios.get(`${API_URL}/share/getall/${hash}`);
+        const res = await axiosInstance.get(`/share/getall/${hash}`);
         return res.data;
       } catch (err) {
         if (axios.isAxiosError(err) && err.response?.status === 404) {
@@ -70,13 +94,13 @@ export default function SharedBrain({
           <div className="flex items-center gap-3 mb-2">
             <User2 className="h-8 w-8 text-purple-600" />
             <h1 className="text-3xl font-bold text-gray-900">
-              {data.user.username}&apos;s Shared Brain
+              {data?.user.username}&apos;s Shared Brain
             </h1>
           </div>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {data.contents.map((content: any, index: number) => (
+          {data?.contents.map((content: Content, index: number) => (
             <motion.div
               key={content.id}
               initial={{ opacity: 0, y: 20 }}

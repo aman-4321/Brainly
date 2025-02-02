@@ -2,8 +2,8 @@ import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../config";
-import { signinSchema, signupSchema } from "../zod/userSchema";
 import { prisma } from "../db";
+import { signinSchema, signupSchema } from "../zod/userSchema";
 
 export const userSignup = async (req: Request, res: Response) => {
   try {
@@ -56,16 +56,19 @@ export const userSignup = async (req: Request, res: Response) => {
     res.cookie("token", token, {
       httpOnly: true,
       sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+      domain:
+        process.env.NODE_ENV === "production"
+          ? process.env.COOKIE_DOMAIN
+          : undefined,
     });
 
     res.status(200).json({
       message: "User Created Successfully",
       username,
       email,
-      token,
     });
   } catch (err) {
-    console.log(err);
     res.status(500).json({
       message: "Error while Signing up ",
       error: err,
@@ -115,6 +118,11 @@ export const userSignin = async (req: Request, res: Response) => {
     res.cookie("token", token, {
       httpOnly: true,
       sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+      domain:
+        process.env.NODE_ENV === "production"
+          ? process.env.COOKIE_DOMAIN
+          : undefined,
     });
 
     res.status(200).json({
@@ -123,10 +131,35 @@ export const userSignin = async (req: Request, res: Response) => {
       email: user.email,
     });
   } catch (err) {
-    console.log(err, JWT_SECRET);
     res.status(500).json({
       message: "Error during Signing in",
       error: err,
+    });
+  }
+};
+
+export const userLogout = async (req: Request, res: Response) => {
+  try {
+    if (!req.cookies.token) {
+      res.status(400).json({
+        message: "Already logged out or no active session",
+      });
+    }
+
+    res.clearCookie("token", {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+      domain:
+        process.env.NODE_ENV === "production"
+          ? process.env.COOKIE_DOMAIN
+          : undefined,
+    });
+    res.status(200).json({ message: "Logged out Successfully" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Error during Logout",
     });
   }
 };
