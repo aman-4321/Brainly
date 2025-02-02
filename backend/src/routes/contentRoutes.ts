@@ -4,8 +4,6 @@ import {
   addContent,
   deleteContent,
   getContent,
-  getContentByID,
-  getContentByType,
   getTags,
 } from "../controller/content.controller";
 
@@ -15,9 +13,9 @@ contentRouter.post("/add", authMiddleware, addContent);
 
 contentRouter.get("/get", authMiddleware, getContent);
 
-contentRouter.get("/get/:id", authMiddleware, getContentByID);
+// contentRouter.get("/get/:id", authMiddleware, getContentByID);
 
-contentRouter.get("/type/:type", authMiddleware, getContentByType);
+// contentRouter.get("/type/:type", authMiddleware, getContentByType);
 
 contentRouter.delete("/delete/:id", authMiddleware, deleteContent);
 
