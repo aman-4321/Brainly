@@ -14,12 +14,7 @@ chat-app/
 
 - 🧠 Store and organize thoughts, notes, and links
 - 🏷️ Tag-based organization system
-- t� Powerful full-text search
-- 🔗 Quick capture of web conten
-- e� Responsive design for mobil ss)e
-- 🌓 Dark/Light theme support
-- 🔄 Real-time sync across devices
-- 🔐 Secure and private storage
+- 🔗 Quick capture of web content
 
 ## Tech Stack
 
