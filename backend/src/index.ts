@@ -48,7 +48,7 @@ app.use("/api/v1/share", shareRouter);
 
 app.use("/health", (req: Request, res: Response) => {
   res.status(200).json({
-    msg: "working",
+    status: "ok",
   });
 });
 
