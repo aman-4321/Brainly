@@ -46,7 +46,7 @@ app.use("/api/v1/user", userRouter);
 app.use("/api/v1/content", contentRouter);
 app.use("/api/v1/share", shareRouter);
 
-app.use("/health", (req: Request, res: Response) => {
+app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({
     status: "ok",
   });
