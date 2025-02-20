@@ -4,21 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsc-watch --onSuccess \"node dist/index.js\"",
-    "build": "tsc -b"
+    "migrate:prod": "npx prisma migrate deploy && npx prisma generate",
+    "migrate:dev": "npx prisma migrate dev",
+    "start": "npx tsc -b && node dist/index.js",
+    "dev:local": "tsc-watch --onSuccess \"node dist/index.js\"",
+    "prisma:migrate": "pnpm migrate:prod",
+    "dev:docker": "pnpm prisma:migrate && pnpm start",
+    "seed": "npx tsc -b && node dist/seeds/user.seed.js",
+    "build": "npx tsc -b"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "6.3.0",
-    "@types/bcrypt": "^5.0.2",
-    "@types/compression": "^1.7.5",
-    "@types/cookie-parser": "^1.4.8",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
-    "@types/jsonwebtoken": "^9.0.8",
-    "bcrypt": "^5.1.1",
+    "@prisma/client": "6.4.0",
+    "bcryptjs": "^3.0.2",
     "compression": "^1.7.5",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -31,7 +31,12 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "prisma": "^6.3.0"
-  },
-  "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0"
+    "@types/compression": "^1.7.5",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.8",
+    "prisma": "^6.3.0",
+    "typescript": "^5.7.3"
+  }
 }
