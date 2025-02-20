@@ -10,7 +10,7 @@ services:
     env_file: ./frontend/.env
     volumes:
       - ./frontend:/app:delegated
-      - ./frontend/node_modules:/app/node_modules
+      - /app/node_modules
     networks:
       - brainly-network
     depends_on:

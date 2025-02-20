@@ -1,6 +1,7 @@
 node_modules
 dist
 .git
-.env
+.env*
+.next
 npm-debug.log
 Dockerfile*
