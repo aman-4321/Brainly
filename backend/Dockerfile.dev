@@ -4,7 +4,7 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y openssl
 
-RUN npm install -g pnpm
+RUN npm install -g pnpm@latest
 
 COPY package.json pnpm-lock.yaml ./
 
