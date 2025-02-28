@@ -14,4 +14,4 @@ COPY . .
 
 EXPOSE 8082
 
-CMD [ "pnpm", "dev:docker" ]
+CMD [ "pnpm", "dev:local" ]
