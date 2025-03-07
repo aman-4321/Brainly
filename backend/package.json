@@ -11,7 +11,8 @@
     "prisma:migrate": "pnpm migrate:prod",
     "dev:docker": "pnpm prisma:migrate && pnpm start",
     "seed": "npx tsc -b && node dist/seeds/user.seed.js",
-    "build": "npx tsc -b"
+    "build": "npx tsc -b",
+    "dev": "tsc-watch --onSuccess \"node dist/index.js\""
   },
   "keywords": [],
   "author": "",
