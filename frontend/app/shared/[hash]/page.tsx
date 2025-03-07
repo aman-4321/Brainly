@@ -58,24 +58,24 @@ export default function SharedBrain({
 
   if (isLoading)
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100">
-        <Loader2 className="h-12 w-12 text-purple-600 animate-spin" />
+      <div className="flex items-center justify-center min-h-screen bg-[#212121]">
+        <Loader2 className="h-12 w-12 text-blue-600 animate-spin" />
       </div>
     );
 
   if (error)
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 p-4">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[#212121] p-4">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="text-center"
         >
-          <h1 className="text-3xl font-bold text-red-500 mb-4">
+          <h1 className="text-3xl font-bold text-red-400 mb-4">
             Invalid Share Link
           </h1>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-gray-300">
             The link you are trying to access is invalid or has expired.
           </p>
         </motion.div>
@@ -83,17 +83,17 @@ export default function SharedBrain({
     );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 p-4">
+    <div className="min-h-screen bg-[#212121] p-4">
       <div className="container mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-8 p-6 bg-white rounded-lg shadow-md"
+          className="mb-8 p-6 bg-[#2a2a2a] rounded-lg shadow-md border border-gray-800"
         >
           <div className="flex items-center gap-3 mb-2">
-            <User2 className="h-8 w-8 text-purple-600" />
-            <h1 className="text-3xl font-bold text-gray-900">
+            <User2 className="h-8 w-8 text-blue-500" />
+            <h1 className="text-3xl font-bold text-white">
               {data?.user.username}&apos;s Shared Brain
             </h1>
           </div>

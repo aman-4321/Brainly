@@ -28,7 +28,7 @@ const Dashboard = () => {
 
   if (isLoading)
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-screen bg-[#212121] text-white">
         Loading...
       </div>
     );
@@ -37,39 +37,37 @@ const Dashboard = () => {
   const toggleModalShare = () => setModalShare(!modalShare);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#212121] text-white">
       <Script
         async
         src="https://platform.twitter.com/widgets.js"
         strategy="afterInteractive"
       />
 
-      <header className="bg-white shadow-sm">
+      <header className="bg-[#212121] border-b border-gray-800 shadow-md">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2 cursor-pointer">
-            <Brain className="h-8 w-8 text-purple-600" />
-            <h1 className="text-2xl font-bold text-gray-800">Brainly</h1>
+            <Brain className="h-8 w-8 text-blue-600" />
+            <h1 className="text-2xl font-bold text-white">Brainly</h1>
           </div>
           <div className="flex items-center space-x-4">
             <Button
               onClick={toggleModalShare}
-              variant="outline"
-              className="flex items-center space-x-2"
+              className="bg-transparent border border-gray-700 text-white hover:bg-gray-800 flex items-center space-x-2"
             >
               <Share className="h-4 w-4" />
               <span>Share Brain</span>
             </Button>
             <Button
               onClick={toggleModalAddContent}
-              className="bg-purple-600 text-white hover:bg-purple-700 flex items-center space-x-2"
+              className="bg-blue-600 text-white hover:bg-blue-700 flex items-center space-x-2"
             >
               <Plus className="h-4 w-4" />
               <span>Add Content</span>
             </Button>
             <Button
               onClick={handleLogout}
-              variant="outline"
-              className="flex items-center space-x-2"
+              className="bg-transparent border border-gray-700 text-white hover:bg-gray-800 flex items-center space-x-2"
             >
               <LogOut className="h-4 w-4" />
               <span>Logout</span>
@@ -80,8 +78,8 @@ const Dashboard = () => {
 
       <main className="container mx-auto px-4 py-8">
         <Dialog open={modalShare} onOpenChange={setModalShare}>
-          <DialogContent className="sm:max-w-[500px]">
-            <DialogTitle className="text-lg font-semibold mb-4">
+          <DialogContent className="sm:max-w-[500px] bg-[#2a2a2a] text-white border-gray-700">
+            <DialogTitle className="text-lg font-semibold mb-4 text-white">
               Share Content
             </DialogTitle>
             <ShareBrain />
@@ -89,8 +87,8 @@ const Dashboard = () => {
         </Dialog>
 
         <Dialog open={modalContent} onOpenChange={setModalContent}>
-          <DialogContent className="sm:max-w-[500px]">
-            <DialogTitle className="text-lg font-semibold mb-4">
+          <DialogContent className="sm:max-w-[500px] bg-[#2a2a2a] text-white border-gray-700">
+            <DialogTitle className="text-lg font-semibold mb-4 text-white">
               Add New Content
             </DialogTitle>
             <AddContentCard onClose={() => setModalContent(false)} />
@@ -98,23 +96,23 @@ const Dashboard = () => {
         </Dialog>
 
         {error && (
-          <div className="text-red-600 bg-red-100 p-4 rounded-md mb-6">
+          <div className="text-red-300 bg-red-500/20 p-4 rounded-md mb-6">
             Error in loading content
           </div>
         )}
 
         {data?.content?.length === 0 ? (
-          <div className="flex flex-col items-center justify-center p-16 text-center bg-white rounded-lg shadow-sm">
-            <Brain className="h-16 w-16 text-gray-400 mb-4" />
-            <h3 className="text-2xl font-semibold text-gray-700 mb-2">
+          <div className="flex flex-col items-center justify-center p-16 text-center bg-[#2a2a2a] rounded-lg shadow-md">
+            <Brain className="h-16 w-16 text-blue-500 mb-4" />
+            <h3 className="text-2xl font-semibold text-white mb-2">
               No Brain Yet!
             </h3>
-            <p className="text-gray-500 mb-4">
+            <p className="text-gray-300 mb-4">
               Start adding some content to your brain.
             </p>
             <Button
               onClick={toggleModalAddContent}
-              className="bg-purple-600 text-white hover:bg-purple-700"
+              className="bg-blue-600 text-white hover:bg-blue-700"
             >
               Add Your First Content
             </Button>

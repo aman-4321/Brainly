@@ -73,19 +73,19 @@ const AddContentCard = ({ onClose }: AddContentCardProps) => {
     <div>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <Label>Type</Label>
+          <Label className="text-white">Type</Label>
           <Select
             onValueChange={(value) =>
               setType(value.toLowerCase() as ContentType)
             }
           >
-            <SelectTrigger className="w-full border-gray-300">
+            <SelectTrigger className="w-full border-gray-700 bg-[#333333] text-white">
               <SelectValue
-                className="placeholder:text-gray-500"
+                className="placeholder:text-gray-400"
                 placeholder="Select a Type"
               />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-[#333333] text-white border-gray-700">
               <SelectGroup>
                 <SelectItem value="Document">Document</SelectItem>
                 <SelectItem value="Link">Link</SelectItem>
@@ -97,31 +97,31 @@ const AddContentCard = ({ onClose }: AddContentCardProps) => {
         </div>
 
         <div>
-          <Label>Link</Label>
+          <Label className="text-white">Link</Label>
           <Input
             disabled={isPending}
             required
             type="text"
             value={link}
             onChange={(e) => setLink(e.target.value)}
-            className="w-full border-gray-300"
+            className="w-full border-gray-700 bg-[#333333] text-white"
           />
         </div>
 
         <div>
-          <Label>Title</Label>
+          <Label className="text-white">Title</Label>
           <Input
             required
             disabled={isPending}
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full border-gray-300"
+            className="w-full border-gray-700 bg-[#333333] text-white"
           />
         </div>
 
         <div>
-          <Label>Tags</Label>
+          <Label className="text-white">Tags</Label>
           <Input
             required
             value={tags}
@@ -129,13 +129,14 @@ const AddContentCard = ({ onClose }: AddContentCardProps) => {
               setTags(e.target.value.split(",").map((tag) => tag.trim()))
             }
             placeholder="Add Tags"
-          ></Input>
+            className="border-gray-700 bg-[#333333] text-white placeholder:text-gray-400"
+          />
         </div>
 
         <button
           type="submit"
           disabled={isPending}
-          className="bg-black text-white px-4 py-2 rounded-lg w-full sm:w-auto hover:bg-gray-800 transition disabled:opacity-50"
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg w-full sm:w-auto hover:bg-blue-700 transition disabled:opacity-50"
         >
           {isPending ? "Adding..." : "Add Content"}
         </button>

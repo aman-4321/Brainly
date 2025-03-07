@@ -59,15 +59,15 @@ function ContentCard({
   const getIcon = () => {
     switch (type) {
       case "video":
-        return <Youtube className="w-5 h-5 text-purple-600" />;
+        return <Youtube className="w-5 h-5 text-blue-500" />;
       case "tweet":
-        return <Twitter className="w-5 h-5 text-purple-600" />;
+        return <Twitter className="w-5 h-5 text-blue-500" />;
       case "document":
-        return <FileText className="w-5 h-5 text-purple-600" />;
+        return <FileText className="w-5 h-5 text-blue-500" />;
       case "link":
-        return <LinkIcon className="w-5 h-5 text-purple-600" />;
+        return <LinkIcon className="w-5 h-5 text-blue-500" />;
       default:
-        return <NotebookIcon className="w-5 h-5 text-purple-600" />;
+        return <NotebookIcon className="w-5 h-5 text-blue-500" />;
     }
   };
 
@@ -94,17 +94,17 @@ function ContentCard({
         );
       case "document":
         return (
-          <div className="bg-gray-100 p-4 rounded-md">
+          <div className="bg-[#333333] p-4 rounded-md">
             <div className="flex items-center space-x-2 mb-2">
-              <FileText className="w-6 h-6 text-purple-600" />
-              <span className="font-medium text-gray-700">
+              <FileText className="w-6 h-6 text-blue-500" />
+              <span className="font-medium text-gray-200">
                 Document Preview
               </span>
             </div>
-            <p className="text-sm text-gray-600 mb-4 line-clamp-3">{title}</p>
+            <p className="text-sm text-gray-300 mb-4 line-clamp-3">{title}</p>
             <a
               href={link}
-              className="inline-flex items-center space-x-2 text-purple-600 hover:text-purple-800 transition-colors"
+              className="inline-flex items-center space-x-2 text-blue-400 hover:text-blue-300 transition-colors"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -115,15 +115,15 @@ function ContentCard({
         );
       case "link":
         return (
-          <div className="bg-gray-100 p-4 rounded-md">
+          <div className="bg-[#333333] p-4 rounded-md">
             <div className="flex items-center space-x-2 mb-2">
-              <LinkIcon className="w-6 h-6 text-purple-600" />
-              <span className="font-medium text-gray-700">Link Preview</span>
+              <LinkIcon className="w-6 h-6 text-blue-500" />
+              <span className="font-medium text-gray-200">Link Preview</span>
             </div>
-            <p className="text-sm text-gray-600 mb-2 line-clamp-2">{title}</p>
+            <p className="text-sm text-gray-300 mb-2 line-clamp-2">{title}</p>
             <a
               href={link}
-              className="text-purple-600 hover:text-purple-800 transition-colors text-sm break-all"
+              className="text-blue-400 hover:text-blue-300 transition-colors text-sm break-all"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -142,12 +142,12 @@ function ContentCard({
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2 }}
     >
-      <Card className="h-full overflow-hidden">
+      <Card className="h-full overflow-hidden bg-[#2a2a2a] border-gray-700">
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               {getIcon()}
-              <span className="text-lg font-semibold text-gray-900 truncate">
+              <span className="text-lg font-semibold text-white truncate">
                 {title}
               </span>
             </div>
@@ -157,7 +157,7 @@ function ContentCard({
                 size="icon"
                 onClick={handleDelete}
                 disabled={isPending}
-                className="text-gray-400 hover:text-red-600 hover:bg-red-100 transition-colors"
+                className="text-gray-400 hover:text-red-400 hover:bg-red-900/20 transition-colors"
               >
                 <Trash2 className="w-5 h-5" />
               </Button>
@@ -174,7 +174,7 @@ function ContentCard({
               <Badge
                 key={tag.id ?? `tag-index-${index}`}
                 variant="secondary"
-                className="bg-purple-100 text-purple-800 hover:bg-purple-200"
+                className="bg-blue-900/30 text-blue-300 hover:bg-blue-800/40"
               >
                 {tag.title}
               </Badge>
