@@ -6,7 +6,7 @@ const HomePage = () => {
     <div className="pt-32">
       <div>
         <nav className="fixed top-0 left-0 right-0 border-b-[1px] border-gray-300 shadow-md py-6 px-6 bg-white z-50 flex items-center justify-between">
-          <div className="font-bold text-xl">Brainly</div>
+          <div className="font-bold text-xl cursor-pointer">Brainly</div>
 
           <div className="flex space-x-8">
             <div>Product</div>
@@ -18,9 +18,11 @@ const HomePage = () => {
 
           <div className="flex items-center space-x-6">
             <Link href="/signin">Sign In</Link>
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-600">
-              Get Started
-            </button>
+            <Link href="/dashboard">
+              <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-600">
+                Get Started
+              </button>
+            </Link>
           </div>
         </nav>
       </div>
@@ -37,9 +39,11 @@ const HomePage = () => {
         </p>
         <p>bookmarks, links, notes, and files</p>
 
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-600 text-lg mt-10">
-          Get you second brain
-        </button>
+        <Link href="/dashboard">
+          <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-600 text-lg mt-10">
+            Get you second brain
+          </button>
+        </Link>
       </div>
 
       <div className="flex justify-center items-center pt-20 relative pb-20">
